@@ -27,32 +27,26 @@
   --shadow-md: 0 3px 10px color-mix(in srgb, #2e2b25 16%, transparent);
   --type-display: 142px; --type-title: 80px; --type-subtitle: 48px;
   --type-body: 40px; --type-small: 34px; --type-kicker: 27px;
-  --pad-x: 144px; --pad-top: 108px; --pad-bottom: 108px; --baseline: 60px;
+  --pad-x: 144px; --pad-top: 108px; --pad-bottom: 108px; --baseline: 60px; --pad-bottom-topic: 150px;
   --page-foot-note: "אופרטורים במספרים שלמים";
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; height: 100%; background: #15130f; overflow: hidden; }
 body { font-family: var(--font-body); }
-#stage { position: absolute; top: 50%; left: 50%; width: 1920px; height: 1080px; transform-origin: center center; }
-.slide { position: absolute; inset: 0; display: none; }
+#stage { position: absolute; top: 50%; left: 50%; width: 1920px; height: 1080px; transform-origin: center center; counter-reset: page; }
+.slide { position: absolute; inset: 0; display: none; flex-direction: column; background: var(--color-bg); color: var(--color-text); text-wrap: pretty; padding: var(--pad-top) var(--pad-x) var(--pad-bottom); counter-increment: page; }
 .slide.active { display: flex; }
 
-.slide {
-  flex-direction: column;
-  background: var(--color-bg); color: var(--color-text);
-  text-wrap: pretty;
-  padding: var(--pad-top) var(--pad-x) var(--pad-bottom);
-}
 .centered { text-align: center; align-items: center; }
 .slide-title {
   font-family: var(--font-heading); font-weight: var(--font-heading-weight);
   font-size: var(--type-title); line-height: calc(1.5 * var(--baseline)); margin: 0;
 }
 .pin-bottom { position: absolute; left: var(--pad-x); right: var(--pad-x); bottom: var(--pad-bottom); }
-.meta { display: flex; align-items: baseline; gap: 18px; font-size: var(--type-kicker); color: color-mix(in srgb, var(--color-text) 55%, transparent); }
+.bottom-topic { position: absolute; left: var(--pad-x); right: var(--pad-x); bottom: var(--pad-bottom-topic); }
+.bottom-topic, .slide:has(.bottom-topic) .pin-bottom { translate: 0 30px; }
+.meta { display: flex; align-items: baseline; gap: 18px; font-size: calc(1.0 * var(--type-kicker)); color: color-mix(in srgb, var(--color-text) 55%, transparent); }
 
-#stage { counter-reset: page; }
-.slide { counter-increment: page; }
 .page-foot {
   position: absolute; left: var(--pad-x); bottom: 34px;
   font-size: var(--type-kicker); letter-spacing: 0.02em;
@@ -60,7 +54,7 @@ body { font-family: var(--font-body); }
   background: var(--color-surface); border-radius: 999px;
   padding: 8px 18px;
 }
-.page-foot::before { content: counter(page) " · "; }
+.page-foot::before { content: "3 · "; }* 
 .page-foot::after { content: var(--page-foot-note); }
 
 .cover { justify-content: center; align-items: center; text-align: center; }
@@ -364,14 +358,13 @@ ul.bullets-vivid li::before { content: counter(bv); position: static; counter-in
 
 .content:has(.op-anim-split) { padding-top: calc(1.6 * var(--baseline)); }
 .op-anim-split { display: grid; grid-template-columns: 0.85fr 1.25fr; gap: 80px; align-items: stretch; margin-top: calc(0.6 * var(--baseline)); max-width: 1760px; }
-.op-code { font-size: 20px; line-height: 1.5; padding: 32px 40px; height: 460px; overflow-y: auto; box-sizing: border-box; scrollbar-width: thin; scrollbar-color: var(--color-accent-2-600) transparent; }
+.op-code { position: relative; font-size: 20px; line-height: 1.5; padding: 32px 40px; height: 460px; overflow-y: auto; box-sizing: border-box; scrollbar-width: thin; scrollbar-color: var(--color-accent-2-600) transparent; }
 .op-code::-webkit-scrollbar { width: 8px; }
 .op-code::-webkit-scrollbar-track { background: transparent; }
 .op-code::-webkit-scrollbar-thumb { background: var(--color-accent-2-600); border-radius: 999px; }
 .op-code.zoomable { cursor: zoom-in; }
 .op-code.zoomable.zoomed { position: fixed; inset: 0; margin: auto; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(1.7); z-index: 60; cursor: zoom-out; box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
 .op-line { display: block; padding: 4px 10px; border-radius: 6px; opacity: 0.4; transition: color 0.2s ease, background 0.2s ease, opacity 0.2s ease; }
-.op-code { position: relative; }
 .op-line-highlight { position: absolute; left: 4px; right: 4px; border-radius: 8px; border: 3px solid var(--color-accent-2-500); background: transparent; opacity: 0; transition: top .3s ease, height .3s ease, opacity .3s ease; pointer-events: none; }
 .op-line-highlight.visible { opacity: 1; }
 .op-line.active { opacity: 1; color: var(--color-accent-300); font-weight: 600; }
@@ -383,7 +376,6 @@ ul.bullets-vivid li::before { content: counter(bv); position: static; counter-in
 .op-ptr-arrow { width: 3px; height: 26px; position: relative; }
 .op-ptr-arrow::after { content: ''; position: absolute; bottom: -2px; left: 50%; transform: translateX(-50%); border-left: 6px solid transparent; border-right: 6px solid transparent; border-top: 9px solid currentColor; }
 .op-diagram { flex: 1; display: flex; align-items: center; justify-content: center; flex-wrap: nowrap; gap: 0; position: relative; }
-.op-diagram-stage.tall { height: 640px; }
 .op-diagram-stage.tall .op-diagram { align-items: flex-start; padding-top: 0; }
 .op-diagram-stage.tall { height: 560px; }
 .op-anim-slide.tight-top { padding-top: 24px; }
@@ -423,7 +415,6 @@ ul.bullets-vivid li::before { content: counter(bv); position: static; counter-in
 .op-sum-label { font-size: 22px; color: var(--color-accent-700); }
 .op-sum-value { font-size: 40px; border: 3px solid var(--color-text); border-radius: var(--radius-lg); background: var(--color-surface); box-shadow: var(--shadow-sm); padding: 10px 24px; min-width: 90px; text-align: center; }
 .mod-digit-row { display:flex; gap:16px; justify-content:center; }
-.mod-digit-row .op-box.highlight { border-color: var(--color-accent-700); box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-accent-700) 25%, transparent); }
 .mod-vars-row { display:flex; gap:24px; justify-content:center; flex-wrap:wrap; margin-top:8px; }
 .mod-vars-row .op-sum { margin-bottom:0; }
 .mod-vars-row .op-sum-value { font-size:28px; min-width:64px; padding:8px 16px; }
@@ -553,7 +544,7 @@ a:hover { color: var(--color-accent-600); }
 .ref-slide .ref-code::-webkit-scrollbar { width: 10px; }
 .ref-slide .ref-code::-webkit-scrollbar-track { background: transparent; }
 .ref-slide .ref-code::-webkit-scrollbar-thumb { background: var(--color-accent-2-600); border-radius: 999px; }
-.ref-slide .ref-code.zoomed { position: fixed; inset: 0; margin: auto !important; top: 50%; left: 50%; width: 1560px; max-height: 860px; transform: translate(-50%, -50%) scale(1.25); z-index: 60; cursor: zoom-out; box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
+.ref-slide .ref-code.zoomed { position: fixed; margin: 0 !important; top: 50%; left: 50%; right: auto; bottom: auto; width: 1480px; height: auto; max-height: 820px; transform: translate(-50%, -50%) scale(1.25); z-index: 60; cursor: zoom-out; box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
 .combo-diagram { display:flex; flex-direction:column; gap:22px; align-items:center; width:100%; justify-content: center; }
 .combo-diagram .mod-orig-caption { font-size:14px; margin-bottom:2px; }
 .combo-diagram .mod-digit-row .op-box { font-size:38px; padding:18px 26px; }
@@ -584,6 +575,33 @@ a:hover { color: var(--color-accent-600); }
 .combo-slide .op-line[data-step="4"] { padding-top: 1px; }
 .combo-title { position: absolute; top: 28px; left: 0; right: 0; margin: 0; text-align: center; z-index: 5; font-size: 52px; }
 
+.opx-slide .op-code { height: 640px; }
+.opx-slide .op-controls .pulse-strong { animation: reveal-pulse .6s ease-in-out 3; }
+.opx-code .op-line-blank { height: 32px; }
+.opx-code .op-line { opacity: 1; color: color-mix(in srgb, var(--color-neutral-100) 55%, transparent); }
+.opx-code [data-step] { transition: color 0.2s ease; }
+.opx-code [data-step].opx-active { color: var(--color-accent-300); font-weight: 600; }
+.opx-op-symbol { font-family: var(--font-heading); font-weight: var(--font-heading-weight); font-size: 56px; color: var(--color-accent-2-700); opacity: 0; display: inline-flex; align-items: center; justify-content: center; width: 96px; height: 96px; border-radius: 50%; background: transparent; transition: opacity .3s ease, transform .3s ease, color .3s ease, background .3s ease; }
+.opx-op-symbol.visible { opacity: 1; }
+.opx-op-symbol.highlight { color: var(--color-accent-700); transform: scale(1.35); background: color-mix(in srgb, var(--color-accent-700) 18%, transparent); }
+.opx-equals { font-family: var(--font-heading); font-weight: var(--font-heading-weight); font-size: 40px; }
+.opx-result-row { display: flex; align-items: center; gap: 28px; opacity: 0; transition: opacity 0.3s ease; direction: ltr; }
+.opx-result-row.visible { opacity: 1; }
+.opx-note { display: flex; align-items: center; gap: 18px; min-height: 48px; font-family: var(--font-body); font-size: 30px; font-weight: 700; color: var(--color-text); margin-top: -12px; opacity: 0; transition: opacity .3s ease; }
+.opx-note.visible { opacity: 1; }
+.opx-note-num { font-family: var(--font-heading); font-size: 34px; direction: ltr; }
+.opx-note s { text-decoration: none; position: relative; color: color-mix(in srgb, var(--color-text) 45%, transparent); }
+.opx-note s::after { content: ''; position: absolute; left: -4px; right: -4px; top: 50%; height: 5px; border-radius: 3px; background: var(--color-accent-700); transform: rotate(-25deg); }
+.opx-diagram .op-box.mod-var-value { min-width: 150px; text-align: center; }
+.opx-diagram .mod-var-box { gap: 22px; }
+.opx-diagram .mod-var-label { font-size: 34px; }
+.opx-diagram .op-box.mod-var-value:empty::before { content: "\00a0"; }
+@keyframes opxValueIn { from { color: transparent; } }
+.opx-diagram #opxResultVal.highlight { position: relative; animation: opxValueIn 1s ease .3s backwards; }
+.opx-diagram #opxResultVal[data-old]::after { content: attr(data-old); position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--color-text); opacity: 0; animation: opxValueOut .3s ease; }
+@keyframes opxValueOut { from { opacity: 1; } to { opacity: 0; } }
+.opx-diagram .op-box.highlight { border-color: var(--color-accent-700); border-width: 5px; transform: scale(1.12); box-shadow: 0 0 0 10px color-mix(in srgb, var(--color-accent-700) 22%, transparent); color: var(--color-accent-700); transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease, color .3s ease; }
+
 </style>
 </head>
 <body>
@@ -607,9 +625,7 @@ a:hover { color: var(--color-accent-600); }
 <section class="slide content ref-slide" data-label="קוד מלא - תרגיל אופרטורים">
   <h2 class="slide-title">תרגיל אופרטורים - הקוד המלא</h2>
   <div class="zoom-overlay"></div>
-  <div class="code-block ref-code zoomable" dir="ltr">using System;
-
-class Program
+  <div class="code-block ref-code zoomable" dir="ltr">class Program
 {
     static void Main(string[] args)
     {
@@ -654,14 +670,43 @@ class Program
         Console.Write("Please enter number3: ");
         int number3 = int.Parse(Console.ReadLine());
 
-        int calcResult = number1 + number2 * number3;
+        int calcResult = (number1 + number2) * number3;
         Console.WriteLine("The result is: " + calcResult);
 
-        // --- Exercise 3: full calculation printed in a single output line ---
-        Console.WriteLine("(" + number1 + " + " + number2 + ") * " + number3 + " = " + ((number1 + number2) * number3));
+
+        // --- Exercise 3: formula printed on output ---
+        Console.WriteLine("(" + number1 + " + " + number2 + ") * " + number3 + " = " + calcResult);
+
+        // a different way
+        //Console.WriteLine("(" + number1 + " + " + number2 + ") * " + number3 + " = " + ((number1 + number2) * number3));
     }
-}
+}</div>
+</section>
+
+<section class="slide content opx-slide" data-label="שלב אחר שלב - תרגיל אופרטורים" data-full="true">
+  <h2 class="slide-title combo-title">תרגיל אופרטורים - אנימציה</h2>
+  <div class="op-anim-split">
+    <div class="op-diagram-stage" style="height:640px;">
+      <div class="opx-diagram" style="height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:56px;">
+        <div style="display:flex; align-items:center; gap:28px; direction:ltr;">
+          <div class="mod-var-box" id="opxNum1Box"><span class="mod-var-label">num1</span><div class="op-box mod-var-value placeholder" id="opxNum1Val"></div></div>
+          <span class="opx-op-symbol" id="opxOpSymbol"></span>
+          <div class="mod-var-box" id="opxNum2Box"><span class="mod-var-label">num2</span><div class="op-box mod-var-value placeholder" id="opxNum2Val"></div></div>
+        </div>
+        <div class="opx-result-row" id="opxResultRow">
+          <div class="mod-var-box visible"><span class="mod-var-label">result</span><div class="op-box mod-var-value placeholder" id="opxResultVal"></div></div>
+        </div>
+        <div class="opx-note" id="opxNote"></div>
+      </div>
+    </div>
+    <div class="code-block op-code opx-code" dir="ltr"></div>
   </div>
+  <div class="op-controls">
+    <button class="btn btn-primary btn-icon" id="opxNext" aria-label="הבא">‹</button>
+    <div class="op-dots" id="opxDots"></div>
+    <button class="btn btn-secondary btn-icon" id="opxPrev" aria-label="הקודם">›</button>
+  </div>
+  <div class="page-foot" aria-hidden="true"></div>
 </section>
 
 <section
@@ -669,7 +714,7 @@ class Program
   data-label="כל השלבים במבט אחד"
   data-steps='[{"line":1},{"line":2,"eqVisible":true,"eq":"ones = originalNum % 10","origActive":true},{"line":2,"eqVisible":true,"eq":"ones = originalNum % 10","eqFaded":true,"origActive":false,"arrowVisible":true,"fillSlot":"ones","fillValue":3},{"line":3,"lines":[3,4],"eqVisible":true,"eq":"temp=originalNum/10 = 12","origActive":true},{"line":4,"lines":[3,4],"eqVisible":true,"eq":"temp=originalNum/10 = 12<br>tens = temp % 10","origActive":true},{"line":4,"lines":[3,4],"eqVisible":true,"eq":"temp=originalNum/10 = 12<br>tens = temp % 10","eqFaded":true,"origActive":false,"arrowVisible":true,"fillSlot":"tens","fillValue":2},{"line":5,"eqVisible":true,"eq":"hundreds=originalNum/100","origActive":true},{"line":5,"eqVisible":true,"eq":"hundreds=originalNum/100","eqFaded":true,"origActive":false,"arrowVisible":true,"fillSlot":"hundreds","fillValue":1},{"line":6,"multiplyVisible":["ones"]},{"line":6,"multiplyVisible":["ones","tens"]},{"line":6,"multiplyVisible":["ones","tens","hundreds"]},{"line":6,"multiplyVisible":["ones","tens","hundreds"],"sumVisible":true},{"line":6,"multiplyVisible":["ones","tens","hundreds"],"sumVisible":true,"revShow":true,"vars":{"reverse":"321"},"flashReverse":true}]'
 >
-  <h2 class="slide-title combo-title">היפוך ספרות</h2>
+  <h2 class="slide-title combo-title">היפוך ספרות - אנימציה</h2>
   <div class="zoom-overlay"></div>
   <div class="op-anim-split">
     <div class="op-diagram-stage" style="height:760px; display:flex;">
@@ -770,7 +815,7 @@ class Program
 </section>
 
 <section class="slide content" data-label="קונבנציות מומלצות" style="padding-top:36px;">
-  <h2 class="slide-title" style="font-size:56px; margin-bottom:0;">קונבנציות (מומלץ!)</h2>
+  <h2 class="slide-title" style="font-size:56px; margin-bottom:0;">קונבנציות (מוסכמות)</h2>
   <table class="table rise" style="margin-top:24px;">
     <thead>
       <tr><th style="color:var(--color-text); font-weight:700;">קונבנציה</th><th style="color:color-mix(in srgb, var(--color-text) 70%, transparent); font-weight:400;">הסבר</th><th style="color:var(--color-accent-2-700);">דוגמה מומלצת</th><th style="color:color-mix(in srgb, var(--color-text) 60%, transparent);">לא מומלץ</th></tr>
@@ -783,6 +828,20 @@ class Program
     </tbody>
   </table>
   <div class="page-foot" aria-hidden="true"></div>
+</section>
+
+<section class="slide cover" data-label="סיום" style="justify-content:flex-start;padding-top:80px">
+  <div class="rise" style="align-items:center;gap:36px;background:color-mix(in srgb, var(--color-accent) 4%, var(--color-bg));border-radius:32px;padding:48px 64px;max-width:1400px;box-shadow:var(--shadow-sm)">
+    <h2 class="display" style="font-size:52px;margin:0">דגשים לזכור:</h2>
+    <ul style="display:flex;flex-direction:column;gap:36px;margin:0;padding:0;list-style:none;text-align:right;font-size:var(--type-subtitle);width:100%">
+      <li style="display:flex;align-items:center;gap:20px;justify-content:flex-start"><span style="width:44px;height:44px;border-radius:50%;background:var(--color-accent);color:var(--color-bg);font-family:var(--font-heading);font-weight:var(--font-heading-weight);font-size:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0">1</span><span>לא נצהיר על משתנה יותר מפעם אחת. לדוגמא: int number</span></li>
+      <li style="display:flex;align-items:center;gap:20px;justify-content:flex-start"><span style="width:44px;height:44px;border-radius:50%;background:var(--color-accent-2);color:var(--color-bg);font-family:var(--font-heading);font-weight:var(--font-heading-weight);font-size:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0">2</span><span>השמת ערך למשתנה, אפשר כמה פעמים שרוצים <br> number = 5; &nbsp&nbsp  number = 6</span></li>
+      <li style="display:flex;align-items:center;gap:20px;justify-content:flex-start"><span style="width:44px;height:44px;border-radius:50%;background:var(--color-accent);color:var(--color-bg);font-family:var(--font-heading);font-weight:var(--font-heading-weight);font-size:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0">3</span><span> ב- "חלוקת שלמים" (טיפוס int) מקבלים את החלק השלם</span></li>
+      <li style="display:flex;align-items:center;gap:20px;justify-content:flex-start"><span style="width:44px;height:44px;border-radius:50%;background:var(--color-accent-2);color:var(--color-bg);font-family:var(--font-heading);font-weight:var(--font-heading-weight);font-size:22px;display:flex;align-items:center;justify-content:center;flex-shrink:0">4</span><span>אופרטור מודולו % נותן את השארית</span></li>
+    </ul>
+  </div>
+  <div class="bottom-topic meta"><span>יסודות מדעי המחשב  |  כיתה י'</span></div>
+  <div class="pin-bottom meta"><span>hagit.yidov@ironialef.org.il</span></div>
 </section>
 
 <button class="nav-btn nav-prev" id="prevBtn" aria-label="השקופית הקודמת">&lsaquo;</button>
@@ -802,13 +861,17 @@ class Program
     document.getElementById('slideCounter').textContent = (idx + 1) + ' / ' + slides.length;
   }
   document.getElementById('prevBtn').addEventListener('click', function () { if (document.body.classList.contains('zoom-active')) return; show(idx - 1); });
-  document.getElementById('nextBtn').addEventListener('click', function () { if (document.body.classList.contains('zoom-active')) return; show(idx + 1); });
+  function goNext() {
+    if (slides[idx].__blockForward && slides[idx].__blockForward()) return;
+    show(idx + 1);
+  }
+  document.getElementById('nextBtn').addEventListener('click', function () { if (document.body.classList.contains('zoom-active')) return; goNext(); });
   window.addEventListener('keydown', function (e) {
     if (document.body.classList.contains('zoom-active')) {
       if (e.key === 'Escape') document.querySelector('.code-block.zoomed').click();
       return;
     }
-    if (e.key === 'ArrowRight' || e.key === ' ') show(idx + 1);
+    if (e.key === 'ArrowRight' || e.key === ' ') goNext();
     if (e.key === 'ArrowLeft') show(idx - 1);
   });
   function scale() {
@@ -1217,6 +1280,225 @@ class Program
       if (slide.classList.contains('active')) { current = 0; render(); }
     }).observe(slide, { attributes: true, attributeFilter: ['class'] });
   });    
+
+  document.querySelectorAll('.opx-slide').forEach(function (slide) {
+    var codeEl = slide.querySelector('.opx-code');
+    var fullCodeData = [
+      {"text":"class Program"},
+      {"text":"{"},
+      {"text":"    static void Main(string[] args)"},
+      {"text":"    {"},
+      {"text":"        // --- Exercise 1: operators demo ---"},
+      {"text":"        int num1;","step":1,"group":1},
+      {"text":"        Console.Write(\"Please enter your first number: \");","group":1},
+      {"text":"        num1 = int.Parse(Console.ReadLine());","step":2,"group":1},
+      {"text":"        Console.WriteLine(\"Your first number is: \" + num1);","group":1},
+      {"text":""},
+      {"text":"        Console.Write(\"Please enter your second number: \");","group":2},
+      {"text":"        int num2 = int.Parse(Console.ReadLine());","step":3,"group":2},
+      {"text":"        Console.WriteLine(\"Your second number is: \" + num2);","group":2},
+      {"text":""},
+      {"text":"        // Operator '+'","group":3},
+      {"parts":[{"text":"        int result","step":4},{"text":" = ","step":6},{"text":"num1 + num2","step":5},{"text":";"}],"group":3},
+      {"text":"        Console.WriteLine(\"Your result is: \" + result);","group":3},
+      {"text":""},
+      {"text":"        // Operator '-'","group":4},
+      {"parts":[{"text":"        result "},{"text":"=","step":8},{"text":" "},{"text":"num1 - num2","step":7},{"text":";"}],"group":4},
+      {"text":"        Console.WriteLine(\"Now your result is: \" + result);","group":4},
+      {"text":""},
+      {"text":"        // Operator '*'","group":5},
+      {"parts":[{"text":"        result "},{"text":"=","step":10},{"text":" "},{"text":"num1 * num2","step":9},{"text":";"}],"group":5},
+      {"text":"        Console.WriteLine(\"Now your result is: \" + result);","group":5},
+      {"text":""},
+      {"text":"        // Operator '/'","group":6},
+      {"parts":[{"text":"        result "},{"text":"=","step":12},{"text":" "},{"text":"num1 / num2","step":11},{"text":";"}],"group":6},
+      {"text":"        Console.WriteLine(\"Now your result is: \" + result);","group":6},
+      {"text":""},
+      {"text":"        // Operator '%'","group":7},
+      {"parts":[{"text":"        result "},{"text":"=","step":14},{"text":" "},{"text":"num1 % num2","step":13},{"text":";"}],"group":7},
+      {"text":"        Console.WriteLine(\"Now your result is: \" + result);","group":7},
+      {"text":""},
+      {"text":"        // --- Exercise 2: custom calculation with several operators ---"},
+      {"text":"        // Example: number1 + number2 * number3"},
+      {"text":"        Console.Write(\"Please enter number1: \");"},
+      {"text":"        int number1 = int.Parse(Console.ReadLine());"},
+      {"text":""},
+      {"text":"        Console.Write(\"Please enter number2: \");"},
+      {"text":"        int number2 = int.Parse(Console.ReadLine());"},
+      {"text":""},
+      {"text":"        Console.Write(\"Please enter number3: \");"},
+      {"text":"        int number3 = int.Parse(Console.ReadLine());"},
+      {"text":""},
+      {"text":"        int calcResult = (number1 + number2) * number3;"},
+      {"text":"        Console.WriteLine(\"The result is: \" + calcResult);"},
+      {"text":""},
+      {"text":""},
+      {"text":"        // --- Exercise 3: formula printed on output ---"},
+      {"text":"        Console.WriteLine(\"(\" + number1 + \" + \" + number2 + \") * \" + number3 + \" = \" + calcResult);"},
+      {"text":""},
+      {"text":"        // a different way"},
+      {"text":"        //Console.WriteLine(\"(\" + number1 + \" + \" + number2 + \") * \" + number3 + \" = \" + ((number1 + number2) * number3));"},
+      {"text":"    }"},
+      {"text":"}"}
+    ];
+    var codeData = slide.hasAttribute('data-full') ? fullCodeData : [
+      {"text":"class Program"},
+      {"text":"{"},
+      {"text":"    static void Main(string[] args)"},
+      {"text":"    {"},
+      {"text":""},
+      {"text":"        int num1;","step":1},
+      {"text":"        num1 = int.Parse(Console.ReadLine());","step":2},
+      {"text":""},
+      {"text":"        int num2 = int.Parse(Console.ReadLine());","step":3},
+      {"text":""},
+      {"parts":[{"text":"        int result","step":4},{"text":" = ","step":6},{"text":"num1 + num2","step":5},{"text":";"}]},
+      {"parts":[{"text":"        result "},{"text":"=","step":8},{"text":" "},{"text":"num1 - num2","step":7},{"text":";"}]},
+      {"parts":[{"text":"        result "},{"text":"=","step":10},{"text":" "},{"text":"num1 * num2","step":9},{"text":";"}]},
+      {"parts":[{"text":"        result "},{"text":"=","step":12},{"text":" "},{"text":"num1 / num2","step":11},{"text":";"}]},
+      {"parts":[{"text":"        result "},{"text":"=","step":14},{"text":" "},{"text":"num1 % num2","step":13},{"text":";"}]},
+      {"text":""},
+      {"text":"    }"},
+      {"text":"}"}
+    ];
+    codeData.forEach(function (item) {
+      var lineSpan = document.createElement('span');
+      lineSpan.className = 'op-line' + (item.text === '' ? ' op-line-blank' : '');
+      if (item.group) lineSpan.setAttribute('data-group', item.group);
+      if (item.parts) {
+        item.parts.forEach(function (part) {
+          var partSpan = document.createElement('span');
+          partSpan.textContent = part.text;
+          if (part.step) partSpan.setAttribute('data-step', part.step);
+          lineSpan.appendChild(partSpan);
+        });
+      } else {
+        lineSpan.textContent = item.text;
+        if (item.step) lineSpan.setAttribute('data-step', item.step);
+      }
+      codeEl.appendChild(lineSpan);
+    });
+
+    var opxSteps = [
+      {codeStep:1, num1:'declare'},
+      {codeStep:2, num1:17},
+      {codeStep:3, num2:5},
+      {codeStep:4, result:'declare'},
+      {codeStep:5, opSymbol:'+', highlightOperands:true, highlightOp:true},
+      {codeStep:6, result:22},
+      {codeStep:7, opSymbol:'-', highlightOp:true},
+      {codeStep:8, result:12},
+      {codeStep:9, opSymbol:'*', highlightOp:true},
+      {codeStep:10, result:85},
+      {codeStep:11, opSymbol:'/', highlightOp:true},
+      {codeStep:12, result:3, note:'רק החלק השלם <span class="opx-note-num">3  <s>.4</s></span>'},
+      {codeStep:13, opSymbol:'%', highlightOp:true},
+      {codeStep:14, result:2, note:'שארית'},
+      {end:true}
+    ];
+
+    var dotsWrap = slide.querySelector('#opxDots');
+    opxSteps.forEach(function () {
+      var dot = document.createElement('div');
+      dot.className = 'op-dot';
+      dotsWrap.appendChild(dot);
+    });
+    var dots = dotsWrap.querySelectorAll('.op-dot');
+    var prevBtn = slide.querySelector('#opxPrev');
+    var nextBtn = slide.querySelector('#opxNext');
+    var num1Box = slide.querySelector('#opxNum1Box');
+    var num2Box = slide.querySelector('#opxNum2Box');
+    var num1ValEl = slide.querySelector('#opxNum1Val');
+    var num2ValEl = slide.querySelector('#opxNum2Val');
+    var resultRow = slide.querySelector('#opxResultRow');
+    var resultValEl = slide.querySelector('#opxResultVal');
+    var opSymbolEl = slide.querySelector('#opxOpSymbol');
+    var current = 0;
+    var warned = false;
+    slide.__blockForward = function () {
+      if (current !== 0 || warned) return false;
+      warned = true;
+      nextBtn.classList.remove('pulse-strong');
+      void nextBtn.offsetWidth;
+      nextBtn.classList.add('pulse-strong');
+      return true;
+    };
+    nextBtn.addEventListener('animationend', function () { nextBtn.classList.remove('pulse-strong'); });    
+    var groupFrame = null;
+    if (slide.hasAttribute('data-full')) {
+      groupFrame = document.createElement('div');
+      groupFrame.className = 'op-line-highlight';
+      codeEl.appendChild(groupFrame);
+    }
+
+    function render() {
+      var num1Val, num2Val, resultVal, prevResult, num1Declared = false, num2Declared = false, resultDeclared = false, opSym = '';
+      for (var i = 0; i <= current; i++) {
+        var s = opxSteps[i];
+        if (s.num1 === 'declare' || typeof s.num1 === 'number') num1Declared = true;
+        if (typeof s.num1 === 'number') num1Val = s.num1;
+        if (s.num2 === 'declare' || typeof s.num2 === 'number') num2Declared = true;
+        if (typeof s.num2 === 'number') num2Val = s.num2;
+        if (s.result === 'declare' || typeof s.result === 'number') resultDeclared = true;
+       if (typeof s.result === 'number') { if (i === current) prevResult = resultVal; resultVal = s.result; }
+        if (s.opSymbol) opSym = s.opSymbol;
+      }
+      num1Box.classList.toggle('visible', num1Declared);
+      num1ValEl.textContent = num1Val !== undefined ? num1Val : '';
+      num1ValEl.classList.toggle('placeholder', num1Val === undefined);
+      num2Box.classList.toggle('visible', num2Declared);
+      num2ValEl.textContent = num2Val !== undefined ? num2Val : '';
+      num2ValEl.classList.toggle('placeholder', num2Val === undefined);
+      resultRow.classList.toggle('visible', resultDeclared);
+      resultValEl.textContent = resultVal !== undefined ? resultVal : '';
+      resultValEl.classList.toggle('placeholder', resultVal === undefined);
+      opSymbolEl.textContent = opSym;
+      opSymbolEl.classList.toggle('visible', !!opSym);
+
+      var cur = current >= 0 ? opxSteps[current] : null;
+      num1ValEl.classList.toggle('highlight', !!(cur && cur.highlightOperands));
+      num2ValEl.classList.toggle('highlight', !!(cur && cur.highlightOperands));
+      opSymbolEl.classList.toggle('highlight', !!(cur && cur.highlightOp));
+      var noteEl = slide.querySelector('#opxNote');
+      if (cur && cur.note) noteEl.innerHTML = cur.note;
+      noteEl.classList.toggle('visible', !!(cur && cur.note));      
+      resultValEl.classList.toggle('highlight', !!(cur && typeof cur.result === 'number'));
+      if (cur && typeof cur.result === 'number' && prevResult !== undefined) 
+        resultValEl.setAttribute('data-old', prevResult);
+      else 
+        resultValEl.removeAttribute('data-old');      
+
+      codeEl.querySelectorAll('.opx-active').forEach(function (el) { el.classList.remove('opx-active'); });
+      var target = cur ? codeEl.querySelector('[data-step="' + cur.codeStep + '"]') : null;
+      if (target) {
+        target.classList.add('opx-active');
+        codeEl.scrollTop = Math.max(0, target.offsetTop - codeEl.clientHeight / 2 + target.offsetHeight / 2);
+        if (groupFrame) {
+          var groupId = target.closest('.op-line').getAttribute('data-group');
+          var groupLines = codeEl.querySelectorAll('.op-line[data-group="' + groupId + '"]');
+          var firstLine = groupLines[0], lastLine = groupLines[groupLines.length - 1];
+          groupFrame.style.top = (firstLine.offsetTop - 4) + 'px';
+          groupFrame.style.height = (lastLine.offsetTop + lastLine.offsetHeight - firstLine.offsetTop + 8) + 'px';
+          groupFrame.classList.add('visible');
+        }
+      } else {
+        if (groupFrame) groupFrame.classList.remove('visible');
+      }
+      dots.forEach(function (d, i) {
+        var idx = opxSteps.length - 1 - i;
+        d.classList.toggle('done', idx < current);
+        d.classList.toggle('active', idx === current);
+      });
+      prevBtn.disabled = current === 0;
+      nextBtn.disabled = current === opxSteps.length - 1;
+    }
+    prevBtn.addEventListener('click', function (e) { e.stopPropagation(); if (current > 0) { current--; render(); } });
+    nextBtn.addEventListener('click', function (e) { e.stopPropagation(); if (current < opxSteps.length - 1) { current++; render(); } });
+    render();
+    new MutationObserver(function () {
+      if (slide.classList.contains('active')) { current = 0; warned = false; render(); }
+    }).observe(slide, { attributes: true, attributeFilter: ['class'] });
+  });  
 
 })();
 </script>
