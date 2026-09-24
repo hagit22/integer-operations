@@ -585,10 +585,16 @@ a:hover { color: var(--color-accent-600); }
 .opx-op-symbol.visible { opacity: 1; }
 .opx-op-symbol.highlight { color: var(--color-accent-700); transform: scale(1.35); background: color-mix(in srgb, var(--color-accent-700) 18%, transparent); }
 .opx-equals { font-family: var(--font-heading); font-weight: var(--font-heading-weight); font-size: 40px; }
-.opx-result-row { display: flex; align-items: center; gap: 28px; opacity: 0; transition: opacity 0.3s ease; direction: ltr; }
+.opx-result-row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; gap: 32px; width: 100%; opacity: 0; transition: opacity 0.3s ease; direction: ltr; }
 .opx-result-row.visible { opacity: 1; }
-.opx-note { display: flex; align-items: center; gap: 18px; min-height: 48px; font-family: var(--font-body); font-size: 30px; font-weight: 700; color: var(--color-text); margin-top: -12px; opacity: 0; transition: opacity .3s ease; }
+.opx-note { direction: rtl; justify-self: end; white-space: nowrap; display: flex; align-items: center; gap: 18px; height: 112px; font-family: var(--font-body); font-size: 30px; font-weight: 700; color: var(--color-text); opacity: 0; transition: opacity .3s ease; }
 .opx-note.visible { opacity: 1; }
+.opx-console { width: 100%; max-width: 640px; min-height: 84px; display: flex; align-items: center; gap: 16px; background: var(--color-neutral-900); color: var(--color-neutral-100); border-radius: var(--radius-lg); padding: 20px 28px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 30px; box-shadow: var(--shadow-sm); transition: box-shadow .3s ease; }
+.opx-console-prompt { color: var(--color-accent-2-500); }
+.opx-console.highlight { outline: 5px solid var(--color-accent-700); box-shadow: 0 0 0 10px color-mix(in srgb, var(--color-accent-700) 22%, transparent); }
+#opxConsoleText::after { content: '_'; animation: opxBlink 1s step-end infinite; }
+@keyframes opxBlink { 50% { opacity: 0; } }
+.opx-slide:not([data-full]) .opx-console { display: none; }
 .opx-note-num { font-family: var(--font-heading); font-size: 34px; direction: ltr; }
 .opx-note s { text-decoration: none; position: relative; color: color-mix(in srgb, var(--color-text) 45%, transparent); }
 .opx-note s::after { content: ''; position: absolute; left: -4px; right: -4px; top: 50%; height: 5px; border-radius: 3px; background: var(--color-accent-700); transform: rotate(-25deg); }
@@ -597,10 +603,43 @@ a:hover { color: var(--color-accent-600); }
 .opx-diagram .mod-var-label { font-size: 34px; }
 .opx-diagram .op-box.mod-var-value:empty::before { content: "\00a0"; }
 @keyframes opxValueIn { from { color: transparent; } }
-.opx-diagram #opxResultVal.highlight { position: relative; animation: opxValueIn 1s ease .3s backwards; }
-.opx-diagram #opxResultVal[data-old]::after { content: attr(data-old); position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--color-text); opacity: 0; animation: opxValueOut .3s ease; }
+.opx-diagram #opxResultVal.highlight { position: relative; animation: opxValueIn 0s ease 0s backwards; }
+.opx-diagram #opxResultVal[data-old]::after { content: attr(data-old); position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--color-text); opacity: 0; animation: opxValueOut 0s ease; }
 @keyframes opxValueOut { from { opacity: 1; } to { opacity: 0; } }
 .opx-diagram .op-box.highlight { border-color: var(--color-accent-700); border-width: 5px; transform: scale(1.12); box-shadow: 0 0 0 10px color-mix(in srgb, var(--color-accent-700) 22%, transparent); color: var(--color-accent-700); transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease, color .3s ease; }
+
+.cat-wrap { position: absolute; top: 130px; bottom: 240px; left: var(--pad-x); right: var(--pad-x); display: flex; flex-direction: column; align-items: center; justify-content: space-between; direction: ltr; }
+/* code line: gray at rest, each group takes its color on its step and keeps it; glow only on the current step */
+.cat-code { font-size: 26px; padding: 28px 36px; margin: 0; color: color-mix(in srgb, var(--color-neutral-100) 55%, transparent); }
+.cat-code [data-kind] { transition: color .3s ease, text-shadow .3s ease; }
+.cat-wrap.hl-text .cat-code [data-kind="text"] { color: #ffa25c; font-weight: 700; text-shadow: 0 0 16px rgba(255, 162, 92, 1), 0 0 4px rgba(255, 162, 92, 1); }
+.cat-wrap.hl-var .cat-code [data-kind="var"] { color: #4fd8c8; font-weight: 700; text-shadow: 0 0 12px rgba(79, 216, 200, .9); }
+.cat-wrap.hl-plus .cat-code [data-kind="plus"] { color: #b99cff; font-weight: 700; text-shadow: 0 0 16px rgba(185, 156, 255, 1), 0 0 4px rgba(185, 156, 255, 1); }
+/* variable slots (top) */
+.cat-vars { display: flex; gap: 56px; }
+.cat-vars .op-box.mod-var-value { font-size: 40px; padding: 14px 26px; min-width: 110px; text-align: center; transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease; }
+.cat-wrap.hl-var .cat-vars .op-box.mod-var-value { border-color: #0f8378; transform: scale(1.1); box-shadow: 0 0 0 10px color-mix(in srgb, #0f8378 22%, transparent); }
+/* built row */
+.cat-row { display: flex; align-items: center; gap: 28px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 40px; }
+.cat-piece { opacity: 0; white-space: pre; font-weight: 700; border-radius: var(--radius-lg); transition: opacity .3s ease, transform .3s ease, box-shadow .3s ease, text-shadow .3s ease; }
+.cat-text { color: #c0551a; }
+.cat-var { color: #0f8378; padding: 6px 14px; }
+.cat-val { opacity: 0; transition: opacity .3s ease; }
+.cat-plus { color: #6a3fc0; }
+.cat-wrap.show-text .cat-text, .cat-wrap.show-text .cat-var { opacity: 1; }
+.cat-wrap.show-var .cat-val { opacity: 1; }
+.cat-wrap.show-plus .cat-plus { opacity: 1; }
+.cat-wrap.hl-text .cat-text { transform: scale(1.15); text-shadow: 0 0 14px color-mix(in srgb, #c0551a 45%, transparent); }
+.cat-wrap.hl-var .cat-var { transform: scale(1.1); box-shadow: 0 0 0 5px #0f8378, 0 0 0 15px color-mix(in srgb, #0f8378 22%, transparent); }
+.cat-wrap.hl-plus .cat-plus { transform: scale(1.35); text-shadow: 0 0 14px color-mix(in srgb, #6a3fc0 45%, transparent); }
+/* console: output is a string, so it uses the text color */
+.cat-console { opacity: 0; transition: opacity .3s ease, box-shadow .3s ease; }
+.cat-wrap.show-out .cat-console { opacity: 1; }
+.cat-wrap.hl-out .cat-console { outline: 5px solid #c0551a; box-shadow: 0 0 0 10px color-mix(in srgb, #c0551a 22%, transparent); }
+.cat-out { white-space: pre; }
+.cat-out-label { color: color-mix(in srgb, var(--color-neutral-100) 55%, transparent); }
+.cat-out::after { content: '_'; animation: opxBlink 1s step-end infinite; }
+.cat-slide .op-controls .pulse-strong { animation: reveal-pulse .6s ease-in-out 3; }
 
 </style>
 </head>
@@ -694,9 +733,11 @@ a:hover { color: var(--color-accent-600); }
           <div class="mod-var-box" id="opxNum2Box"><span class="mod-var-label">num2</span><div class="op-box mod-var-value placeholder" id="opxNum2Val"></div></div>
         </div>
         <div class="opx-result-row" id="opxResultRow">
+          <div class="opx-note" id="opxNote"></div>
           <div class="mod-var-box visible"><span class="mod-var-label">result</span><div class="op-box mod-var-value placeholder" id="opxResultVal"></div></div>
+          <span></span>
         </div>
-        <div class="opx-note" id="opxNote"></div>
+        <div class="opx-console" id="opxConsole" dir="ltr"><span class="opx-console-prompt">&gt;</span><span id="opxConsoleText"></span></div>
       </div>
     </div>
     <div class="code-block op-code opx-code" dir="ltr"></div>
@@ -705,6 +746,43 @@ a:hover { color: var(--color-accent-600); }
     <button class="btn btn-primary btn-icon" id="opxNext" aria-label="הבא">‹</button>
     <div class="op-dots" id="opxDots"></div>
     <button class="btn btn-secondary btn-icon" id="opxPrev" aria-label="הקודם">›</button>
+  </div>
+  <div class="page-foot" aria-hidden="true"></div>
+</section>
+
+<section class="slide content cat-slide" data-label="תרגיל אופרטורים - חלק 3">
+  <h2 class="slide-title combo-title">תרגיל אופרטורים - חלק 3</h2>
+  <div class="cat-wrap">
+    <div class="code-block cat-code" dir="ltr">Console.WriteLine(<span data-kind="text">"("</span> <span data-kind="plus">+</span> <span data-kind="var">number1</span> <span data-kind="plus">+</span> <span data-kind="text">" + "</span> <span data-kind="plus">+</span> <span data-kind="var">number2</span> <span data-kind="plus">+</span> <span data-kind="text">") * "</span> <span data-kind="plus">+</span> <span data-kind="var">number3</span> <span data-kind="plus">+</span> <span data-kind="text">" = "</span> <span data-kind="plus">+</span> <span data-kind="var">calcResult</span>);</div>
+    <div class="cat-vars">
+      <div class="mod-var-box visible"><span class="mod-var-label">number1</span><div class="op-box mod-var-value">2</div></div>
+      <div class="mod-var-box visible"><span class="mod-var-label">number2</span><div class="op-box mod-var-value">3</div></div>
+      <div class="mod-var-box visible"><span class="mod-var-label">number3</span><div class="op-box mod-var-value">4</div></div>
+      <div class="mod-var-box visible"><span class="mod-var-label">calcResult</span><div class="op-box mod-var-value">20</div></div>
+    </div>
+    <div class="cat-row">
+      <span class="cat-piece cat-text">"("</span>
+      <span class="cat-piece cat-plus">+</span>
+      <span class="cat-piece cat-var"><span class="cat-val">2</span></span>
+      <span class="cat-piece cat-plus">+</span>
+      <span class="cat-piece cat-text">" + "</span>
+      <span class="cat-piece cat-plus">+</span>
+      <span class="cat-piece cat-var"><span class="cat-val">3</span></span>
+      <span class="cat-piece cat-plus">+</span>
+      <span class="cat-piece cat-text">") * "</span>
+      <span class="cat-piece cat-plus">+</span>
+      <span class="cat-piece cat-var"><span class="cat-val">4</span></span>
+      <span class="cat-piece cat-plus">+</span>
+      <span class="cat-piece cat-text">" = "</span>
+      <span class="cat-piece cat-plus">+</span>
+      <span class="cat-piece cat-var"><span class="cat-val">20</span></span>
+    </div>
+    <div class="opx-console cat-console"><span class="cat-out-label">Output:</span><span class="opx-console-prompt">&gt;</span><span class="cat-out">(2 + 3) * 4 = 20</span></div>
+  </div>
+  <div class="op-controls">
+    <button class="btn btn-primary btn-icon cat-next" aria-label="הבא">‹</button>
+    <div class="op-dots"></div>
+    <button class="btn btn-secondary btn-icon cat-prev" aria-label="הקודם">›</button>
   </div>
   <div class="page-foot" aria-hidden="true"></div>
 </section>
@@ -799,7 +877,7 @@ class Program
 </section>
 
 <section class="slide content" data-label="כללי שמות משתנים" style="padding-top:36px;">
-  <h2 class="slide-title" style="font-size:56px; margin-bottom:0;">כללי שפת C# לשמות משתנים</h2>
+  <h2 class="slide-title" style="font-size:56px; margin-bottom:0;">כללי שפת #C לשמות משתנים</h2>
   <table class="table rise" style="margin-top:24px;">
     <thead>
       <tr><th style="color:var(--color-text); font-weight:700;">כלל</th><th style="color:color-mix(in srgb, var(--color-text) 70%, transparent); font-weight:400;">הסבר</th><th style="color:var(--color-accent-2-700);">דוגמה תקינה</th><th style="color:var(--color-accent-700);">דוגמה שגויה</th></tr>
@@ -814,8 +892,8 @@ class Program
   <div class="page-foot" aria-hidden="true"></div>
 </section>
 
-<section class="slide content" data-label="קונבנציות מומלצות" style="padding-top:36px;">
-  <h2 class="slide-title" style="font-size:56px; margin-bottom:0;">קונבנציות (מוסכמות)</h2>
+<section class="slide content" data-label="מוסכמות שמות משתנים" style="padding-top:36px;">
+  <h2 class="slide-title" style="font-size:56px; margin-bottom:0;">מוסכמות שפת #C לשמות משתנים (קונבנציות)</h2>
   <table class="table rise" style="margin-top:24px;">
     <thead>
       <tr><th style="color:var(--color-text); font-weight:700;">קונבנציה</th><th style="color:color-mix(in srgb, var(--color-text) 70%, transparent); font-weight:400;">הסבר</th><th style="color:var(--color-accent-2-700);">דוגמה מומלצת</th><th style="color:color-mix(in srgb, var(--color-text) 60%, transparent);">לא מומלץ</th></tr>
@@ -1292,31 +1370,31 @@ class Program
       {"text":"        int num1;","step":1,"group":1},
       {"text":"        Console.Write(\"Please enter your first number: \");","group":1},
       {"text":"        num1 = int.Parse(Console.ReadLine());","step":2,"group":1},
-      {"text":"        Console.WriteLine(\"Your first number is: \" + num1);","group":1},
+      {"text":"        Console.WriteLine(\"Your first number is: \" + num1);","step":"w1","group":1},
       {"text":""},
       {"text":"        Console.Write(\"Please enter your second number: \");","group":2},
       {"text":"        int num2 = int.Parse(Console.ReadLine());","step":3,"group":2},
-      {"text":"        Console.WriteLine(\"Your second number is: \" + num2);","group":2},
+      {"text":"        Console.WriteLine(\"Your second number is: \" + num2);","step":"w2","group":2},
       {"text":""},
       {"text":"        // Operator '+'","group":3},
       {"parts":[{"text":"        int result","step":4},{"text":" = ","step":6},{"text":"num1 + num2","step":5},{"text":";"}],"group":3},
-      {"text":"        Console.WriteLine(\"Your result is: \" + result);","group":3},
+      {"text":"        Console.WriteLine(\"Your result is: \" + result);","step":"w3","group":3},
       {"text":""},
       {"text":"        // Operator '-'","group":4},
       {"parts":[{"text":"        result "},{"text":"=","step":8},{"text":" "},{"text":"num1 - num2","step":7},{"text":";"}],"group":4},
-      {"text":"        Console.WriteLine(\"Now your result is: \" + result);","group":4},
+      {"text":"        Console.WriteLine(\"Now your result is: \" + result);","step":"w4","group":4},
       {"text":""},
       {"text":"        // Operator '*'","group":5},
       {"parts":[{"text":"        result "},{"text":"=","step":10},{"text":" "},{"text":"num1 * num2","step":9},{"text":";"}],"group":5},
-      {"text":"        Console.WriteLine(\"Now your result is: \" + result);","group":5},
+      {"text":"        Console.WriteLine(\"Now your result is: \" + result);","step":"w5","group":5},
       {"text":""},
       {"text":"        // Operator '/'","group":6},
       {"parts":[{"text":"        result "},{"text":"=","step":12},{"text":" "},{"text":"num1 / num2","step":11},{"text":";"}],"group":6},
-      {"text":"        Console.WriteLine(\"Now your result is: \" + result);","group":6},
+      {"text":"        Console.WriteLine(\"Now your result is: \" + result);","step":"w6","group":6},
       {"text":""},
       {"text":"        // Operator '%'","group":7},
       {"parts":[{"text":"        result "},{"text":"=","step":14},{"text":" "},{"text":"num1 % num2","step":13},{"text":";"}],"group":7},
-      {"text":"        Console.WriteLine(\"Now your result is: \" + result);","group":7},
+      {"text":"        Console.WriteLine(\"Now your result is: \" + result);","step":"w7","group":7},
       {"text":""},
       {"text":"        // --- Exercise 2: custom calculation with several operators ---"},
       {"text":"        // Example: number1 + number2 * number3"},
@@ -1382,20 +1460,28 @@ class Program
     var opxSteps = [
       {codeStep:1, num1:'declare'},
       {codeStep:2, num1:17},
+      {codeStep:'w1', console:'Your first number is: 17', full:true},
       {codeStep:3, num2:5},
+      {codeStep:'w2', console:'Your second number is: 5', full:true},
       {codeStep:4, result:'declare'},
       {codeStep:5, opSymbol:'+', highlightOperands:true, highlightOp:true},
       {codeStep:6, result:22},
+      {codeStep:'w3', console:'Your result is: 22', full:true},
       {codeStep:7, opSymbol:'-', highlightOp:true},
       {codeStep:8, result:12},
+      {codeStep:'w4', console:'Now your result is: 12', full:true},
       {codeStep:9, opSymbol:'*', highlightOp:true},
       {codeStep:10, result:85},
+      {codeStep:'w5', console:'Now your result is: 85', full:true},
       {codeStep:11, opSymbol:'/', highlightOp:true},
       {codeStep:12, result:3, note:'רק החלק השלם <span class="opx-note-num">3  <s>.4</s></span>'},
+      {codeStep:'w6', console:'Now your result is: 3', full:true},
       {codeStep:13, opSymbol:'%', highlightOp:true},
       {codeStep:14, result:2, note:'שארית'},
+      {codeStep:'w7', console:'Now your result is: 2', full:true},
       {end:true}
     ];
+    if (!slide.hasAttribute('data-full')) opxSteps = opxSteps.filter(function (s) { return !s.full; });
 
     var dotsWrap = slide.querySelector('#opxDots');
     opxSteps.forEach(function () {
@@ -1432,7 +1518,7 @@ class Program
     }
 
     function render() {
-      var num1Val, num2Val, resultVal, prevResult, num1Declared = false, num2Declared = false, resultDeclared = false, opSym = '';
+      var consoleText = '', num1Val, num2Val, resultVal, prevResult, num1Declared = false, num2Declared = false, resultDeclared = false, opSym = '';
       for (var i = 0; i <= current; i++) {
         var s = opxSteps[i];
         if (s.num1 === 'declare' || typeof s.num1 === 'number') num1Declared = true;
@@ -1442,6 +1528,7 @@ class Program
         if (s.result === 'declare' || typeof s.result === 'number') resultDeclared = true;
        if (typeof s.result === 'number') { if (i === current) prevResult = resultVal; resultVal = s.result; }
         if (s.opSymbol) opSym = s.opSymbol;
+        if (s.console) consoleText = s.console;
       }
       num1Box.classList.toggle('visible', num1Declared);
       num1ValEl.textContent = num1Val !== undefined ? num1Val : '';
@@ -1462,6 +1549,8 @@ class Program
       var noteEl = slide.querySelector('#opxNote');
       if (cur && cur.note) noteEl.innerHTML = cur.note;
       noteEl.classList.toggle('visible', !!(cur && cur.note));      
+      slide.querySelector('#opxConsoleText').textContent = consoleText;
+      slide.querySelector('#opxConsole').classList.toggle('highlight', !!(cur && cur.console));
       resultValEl.classList.toggle('highlight', !!(cur && typeof cur.result === 'number'));
       if (cur && typeof cur.result === 'number' && prevResult !== undefined) 
         resultValEl.setAttribute('data-old', prevResult);
@@ -1499,6 +1588,43 @@ class Program
       if (slide.classList.contains('active')) { current = 0; warned = false; render(); }
     }).observe(slide, { attributes: true, attributeFilter: ['class'] });
   });  
+
+  document.querySelectorAll('.cat-slide').forEach(function (slide) {
+    var wrap = slide.querySelector('.cat-wrap');
+    var steps = ['none', 'text', 'var', 'plus', 'out'];
+    var dotsWrap = slide.querySelector('.op-dots');
+    steps.forEach(function () { var d = document.createElement('div'); d.className = 'op-dot'; dotsWrap.appendChild(d); });
+    var dots = dotsWrap.querySelectorAll('.op-dot');
+    var prevBtn = slide.querySelector('.cat-prev');
+    var nextBtn = slide.querySelector('.cat-next');
+    var current = 0, warned = false;
+    function render() {
+      steps.forEach(function (k, i) {
+        wrap.classList.toggle('show-' + k, i <= current);
+        wrap.classList.toggle('hl-' + k, i === current);
+      });
+      dots.forEach(function (d, i) {
+        var idx = steps.length - 1 - i;
+        d.classList.toggle('done', idx < current);
+        d.classList.toggle('active', idx === current);
+      });
+      prevBtn.disabled = current === 0;
+      nextBtn.disabled = current === steps.length - 1;
+    }
+    slide.__blockForward = function () {
+      if (current !== 0 || warned) return false;
+      warned = true;
+      nextBtn.classList.remove('pulse-strong'); void nextBtn.offsetWidth; nextBtn.classList.add('pulse-strong');
+      return true;
+    };
+    nextBtn.addEventListener('animationend', function () { nextBtn.classList.remove('pulse-strong'); });
+    prevBtn.addEventListener('click', function (e) { e.stopPropagation(); if (current > 0) { current--; render(); } });
+    nextBtn.addEventListener('click', function (e) { e.stopPropagation(); if (current < steps.length - 1) { current++; render(); } });
+    render();
+    new MutationObserver(function () {
+      if (slide.classList.contains('active')) { current = 0; warned = false; render(); }
+    }).observe(slide, { attributes: true, attributeFilter: ['class'] });
+  });
 
 })();
 </script>
